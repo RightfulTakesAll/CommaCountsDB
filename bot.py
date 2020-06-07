@@ -196,7 +196,7 @@ async def release(ctx):
 
     embed = discord.Embed(title=f'Latest Release', description='Here is the link. Click it!', colour=ctx.author.colour, timestamp=ctx.message.created_at)
 
-    embed.add_field(name='**Github Repository**', value="**https://github.com/RightfulTakesAll/CommaCountsDB/releases/tag/1.5.3**")
+    embed.add_field(name='**Github Repository**', value="**https://github.com/RightfulTakesAll/CommaCountsDB/releases/tag/1.5.2**")
 
     embed.set_footer(text=f"Carpe Noctem | {bot.user.name}")
     embed.set_author(name=bot.user.name, icon_url=bot.user.avatar_url)
@@ -524,7 +524,7 @@ async def companyview(ctx):
         em.add_field(name='Company Products', value=f"CCounts Ent. is currently working on **{bot.user.name}** :robot:")
         await ctx.send(embed=em)
 
-@client.command(aliases=['8ball'])
+@bot.command(aliases=['8ball'])
 async def _8ball(ctx, *, question):
     responses = ['its possible.',
     'no.',
