@@ -13,3 +13,7 @@ _____________________________
 # Latest Release?
 
 ###### Check The Release Tab -_-
+
+# passGen Command API?
+
+###### [API](https://github.com/DemonEclipSe/authgen/)
