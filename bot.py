@@ -14,6 +14,7 @@ from random import randrange
 from discord import Activity
 from discord import File
 from discord import Permissions
+from authgen import Generator
 #Get current working directory
 cwd = Path(__file__).parents[0]
 cwd = str(cwd)
@@ -24,9 +25,10 @@ secret_file = json.load(open(cwd+'/bot_config/secrets.json'))
 bot = commands.Bot(command_prefix=commands.when_mentioned_or('comma!' , 'c!' , 'c~'), case_insensitive=True)#, owner_id=668612123370323998)
 bot.config_token = secret_file['token']
 logging.basicConfig(level=logging.INFO)
+passGene = Generator
 
 
-bot.version = 'v1.5.2'
+bot.version = 'v1.5.4'
 
 bot.blacklisted_user = []
 
@@ -116,6 +118,32 @@ async def botstats(ctx):
     await ctx.send(embed=embed)
     await ctx.send(f"Hey {ctx.author.display_name} **Look at thoses numbers!**")
 
+@Me.command(name="serverinfo")
+async def guild_info(Ctx):
+    header = f"Server information - {Ctx.guild.name}\n\n"
+    rows = {
+        "Name"                  : Ctx.guild.name,
+        "ID"                    : Ctx.guild.id,
+        "Region"                : str(Ctx.guild.region).title(),
+        "Owner"                 : Ctx.guild.owner.display_name,
+        "Shard ID"              : Ctx.guild.shard_id,
+        "Created on"            : Ctx.guild.created_at.strftime("%d/%m/%y %H:%M:%S"),
+        "Most recent member"    : [Member for Member in Guild.members if Member.joined_at is max([Member.joined_at for Member in Guild.members])][0].display_name,
+        "...joined"             : max([Member.joined_at for Member in Guild.members]).strftime("%d/%m/%y %H:%M:%S"),
+        "Nº of members"         : len(Guild.members),
+        "...of which human"     : len([Member for Member in Guild.members if not Member.bot]),
+        "...of which bots"      : len([Member for Member in Guild.members if Member.bot]),
+        "Nº of banned members"  : len(await Ctx.guild.bans()),
+        "Nº of categories"      : len(Ctx.guild.categories),
+        "Nº of text channels"   : len(Ctx.guild.text_channels),
+        "Nº of voice channels"  : len(Ctx.guild.voice_channels),
+        "Nº of roles"           : len(Ctx.guild.roles),
+        "Nº of invites"         : len(await Ctx.guild.invites()),
+    }
+    table = header + "\n".join([f"{key}{' '*(max([len(key) for key in rows.keys()])+2-len(key))}{value}" for key, value in rows.items()])
+    await Ctx.send(f"```{table}```{Ctx.guild.icon_url}")
+    return
+
 @bot.command()
 async def invite(ctx):
     """
@@ -131,6 +159,50 @@ async def invite(ctx):
 
     await ctx.author.send(embed=embed)
     await ctx.send(f"Hey {ctx.author.mention}, I DM'ed you my invite link!")
+
+@bot.command()
+async def passGen(ctx):
+    await ctx.send("Processing.")
+    asyncio.sleep(10)
+    await ctx.send("Processing..")
+    asyncio.sleep(10)
+    await ctx.send("Processing...")
+    asyncio.sleep(10)
+    password = passGene.random_medium(length=24)
+    await ctx.author.send(f"Password: **{password}**")
+    await ctx.send(f"Hey {ctx.author.mention}, I DM'ed you your password!")
+
+@bot.command()
+async def source(ctx):
+    """
+    A usefull command that displays bot statistics.
+    """
+
+    embed = discord.Embed(title=f'Source Code', description='Here is the link. Click it!', colour=ctx.author.colour, timestamp=ctx.message.created_at)
+
+    embed.add_field(name='**Github Repository**', value="**https://github.com/RightfulTakesAll/CommaCountsDB**")
+
+    embed.set_footer(text=f"Carpe Noctem | {bot.user.name}")
+    embed.set_author(name=bot.user.name, icon_url=bot.user.avatar_url)
+
+    await ctx.send(embed=embed)
+    await ctx.send(f"Hey {ctx.author.mention}, Heres The link!")
+
+@bot.command()
+async def release(ctx):
+    """
+    A usefull command that displays bot statistics.
+    """
+
+    embed = discord.Embed(title=f'Latest Release', description='Here is the link. Click it!', colour=ctx.author.colour, timestamp=ctx.message.created_at)
+
+    embed.add_field(name='**Github Repository**', value="**https://github.com/RightfulTakesAll/CommaCountsDB/releases/tag/1.5.3**")
+
+    embed.set_footer(text=f"Carpe Noctem | {bot.user.name}")
+    embed.set_author(name=bot.user.name, icon_url=bot.user.avatar_url)
+
+    await ctx.send(embed=embed)
+    await ctx.send(f"Hey {ctx.author.mention}, Heres The link!")
 
 @bot.command()
 async def userinfo(ctx, member: discord.Member = None):
@@ -203,6 +275,7 @@ async def embed3(ctx):
     embed.add_field(name='Shows changes made to the bot recently', value="`comma!changelog`", inline=False)
     embed.add_field(name='Shows statistics of the bot', value="`comma!botstats`", inline=False)
     embed.add_field(name='Shows all bot prefixes', value="`comma!prefixes`", inline=False)
+    embed.add_field(name='Shows info for current server which command is executed in', value="`comma!serverinfo`", inline=False)
     
     embed.set_footer(text=f"Carpe Noctem | {bot.user.name}")
 
@@ -214,6 +287,9 @@ async def embed2(ctx):
     embed = discord.Embed(title=f'Misc Commands', description='Here are my misc Modules! :smile:', colour=ctx.author.colour, timestamp=ctx.message.created_at)
 
     embed.add_field(name='Shows the bots invite link', value="`comma!invite`", inline=False)
+    embed.add_field(name='Link To Source Code', value="`comma!source`", inline=False)
+    embed.add_field(name='Generates A Random Password', value="`comma!passGen`", inline=False)
+    embed.add_field(name='Shows The Latest Release For The Bot', value="`comma!release`", inline=False)
 
 
     embed.set_footer(text=f"Carpe Noctem | {bot.user.name}")
@@ -268,6 +344,7 @@ async def embedoi(ctx):
 
     embed.add_field(name='Makes the bot say anything', value="`comma!echo <any_message_you_want>`", inline=False)
     embed.add_field(name='Roles a 6 sided dice', value="`comma!dice`", inline=False)
+    embed.add_field(name='Bot answers a question', value="`comma!8ball <question>`", inline=False)
 
     embed.set_footer(text=f"Carpe Noctem | {bot.user.name}")
     embed.set_author(name=bot.user.name, icon_url=bot.user.avatar_url)
@@ -447,11 +524,24 @@ async def companyview(ctx):
         em.add_field(name='Company Products', value=f"CCounts Ent. is currently working on **{bot.user.name}** :robot:")
         await ctx.send(embed=em)
 
+@client.command(aliases=['8ball'])
+async def _8ball(ctx, *, question):
+    responses = ['its possible.',
+    'no.',
+    'in a few days.',
+    'probably',
+    'Chance of that happening is zero',
+    'Yes',
+    'Not Really',
+    '-_-',
+    'Try again later. Im very tired.']
+    await ctx.send(f'Question: {question}\nAnswer: {random.choice(responses)}')
+
 @bot.command()
 async def changelog(ctx):
         em2 = discord.Embed(Title=":clipboard: **Change Log** :clipboard:", colour=0x62FF45)
         em2.add_field(name=':receipt: Most Recent Version:', value=f"{bot.version}", inline=False)
-        em2.add_field(name=':newspaper: New Features:', value="Multiple Bug Fixes, Fixed a bug with the echo command where anybody could bypass any swear filter and a bug that would dm a random person on accident....", inline=False)
+        em2.add_field(name=':newspaper: New Features:', value="New Password Generator Command (**passGen**)", inline=False)
         em2.add_field(name=':star_struck: Next Possible Features:', value="**Premium Commands, And More!**", inline=False)
         em2.add_field(name=':bug: Known Bugs:', value="**N/A**", inline=False)
         await ctx.send(embed=em2)
