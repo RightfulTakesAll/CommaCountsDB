@@ -118,32 +118,6 @@ async def botstats(ctx):
     await ctx.send(embed=embed)
     await ctx.send(f"Hey {ctx.author.display_name} **Look at thoses numbers!**")
 
-@bot.command(name="serverinfo")
-async def guild_info(Ctx):
-    header = f"Server information - {Ctx.guild.name}\n\n"
-    rows = {
-        "Name"                  : Ctx.guild.name,
-        "ID"                    : Ctx.guild.id,
-        "Region"                : str(Ctx.guild.region).title(),
-        "Owner"                 : Ctx.guild.owner.display_name,
-        "Shard ID"              : Ctx.guild.shard_id,
-        "Created on"            : Ctx.guild.created_at.strftime("%d/%m/%y %H:%M:%S"),
-        "Most recent member"    : [Member for Member in Guild.members if Member.joined_at is max([Member.joined_at for Member in Guild.members])][0].display_name,
-        "...joined"             : max([Member.joined_at for Member in Guild.members]).strftime("%d/%m/%y %H:%M:%S"),
-        "Nº of members"         : len(Guild.members),
-        "...of which human"     : len([Member for Member in Guild.members if not Member.bot]),
-        "...of which bots"      : len([Member for Member in Guild.members if Member.bot]),
-        "Nº of banned members"  : len(await Ctx.guild.bans()),
-        "Nº of categories"      : len(Ctx.guild.categories),
-        "Nº of text channels"   : len(Ctx.guild.text_channels),
-        "Nº of voice channels"  : len(Ctx.guild.voice_channels),
-        "Nº of roles"           : len(Ctx.guild.roles),
-        "Nº of invites"         : len(await Ctx.guild.invites()),
-    }
-    table = header + "\n".join([f"{key}{' '*(max([len(key) for key in rows.keys()])+2-len(key))}{value}" for key, value in rows.items()])
-    await Ctx.send(f"```{table}```{Ctx.guild.icon_url}")
-    return
-
 @bot.command()
 async def invite(ctx):
     """
@@ -216,7 +190,7 @@ async def userinfo(ctx, member: discord.Member = None):
     embed.set_footer(text=f"Carpe Noctem | {bot.user.name}")
     
     embed.add_field(name="ID:", value=member.id, inline=False)
-    embed.add_field(name="Guild name:", value=member.display_name, inline=False)
+    embed.add_field(name="Display name:", value=member.display_name, inline=False)
     
     embed.add_field(name="Created at:", value=member.created_at.strftime("%a, %d %B %Y, %I:%M %p GMT"), inline=False)
     embed.add_field(name="Joined at:", value=member.joined_at.strftime("%a, %d %B %Y, %I:%M %p GMT"), inline=False)
@@ -275,7 +249,6 @@ async def embed3(ctx):
     embed.add_field(name='Shows changes made to the bot recently', value="`comma!changelog`", inline=False)
     embed.add_field(name='Shows statistics of the bot', value="`comma!botstats`", inline=False)
     embed.add_field(name='Shows all bot prefixes', value="`comma!prefixes`", inline=False)
-    embed.add_field(name='Shows info for current server which command is executed in', value="`comma!serverinfo`", inline=False)
     
     embed.set_footer(text=f"Carpe Noctem | {bot.user.name}")
 
