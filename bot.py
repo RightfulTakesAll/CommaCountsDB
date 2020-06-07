@@ -118,7 +118,7 @@ async def botstats(ctx):
     await ctx.send(embed=embed)
     await ctx.send(f"Hey {ctx.author.display_name} **Look at thoses numbers!**")
 
-@Me.command(name="serverinfo")
+@bot.command(name="serverinfo")
 async def guild_info(Ctx):
     header = f"Server information - {Ctx.guild.name}\n\n"
     rows = {
