@@ -14,6 +14,7 @@ from random import randrange
 from discord import Activity
 from discord import File
 from discord import Permissions
+from authgen import Generator
 #Get current working directory
 cwd = Path(__file__).parents[0]
 cwd = str(cwd)
@@ -24,9 +25,10 @@ secret_file = json.load(open(cwd+'/bot_config/secrets.json'))
 bot = commands.Bot(command_prefix=commands.when_mentioned_or('comma!' , 'c!' , 'c~'), case_insensitive=True)#, owner_id=668612123370323998)
 bot.config_token = secret_file['token']
 logging.basicConfig(level=logging.INFO)
+passGene = Generator
 
 
-bot.version = 'v1.5.2'
+bot.version = 'v1.5.3'
 
 bot.blacklisted_user = []
 
@@ -133,6 +135,34 @@ async def invite(ctx):
     await ctx.send(f"Hey {ctx.author.mention}, I DM'ed you my invite link!")
 
 @bot.command()
+async def passGen(ctx):
+    await ctx.send("Processing.")
+    asyncio.sleep(3)
+    await ctx.send("Processing..")
+    asyncio.sleep(3)
+    await ctx.send("Processing...")
+    asyncio.sleep(3)
+    password = passGene.random_medium(length=24)
+    await ctx.author.send(f"Password: {password}")
+    await ctx.send(f"Hey {ctx.author.mention}, I DM'ed you your password!")
+
+@bot.command()
+async def source(ctx):
+    """
+    A usefull command that displays bot statistics.
+    """
+
+    embed = discord.Embed(title=f'Source Code', description='Here is the link. Click it!', colour=ctx.author.colour, timestamp=ctx.message.created_at)
+
+    embed.add_field(name='**Github Repositroy**', value="**https://github.com/RightfulTakesAll/CommaCountsDB**")
+
+    embed.set_footer(text=f"Carpe Noctem | {bot.user.name}")
+    embed.set_author(name=bot.user.name, icon_url=bot.user.avatar_url)
+
+    await ctx.send(embed=embed)
+    await ctx.send(f"Hey {ctx.author.mention}, Heres link!")
+
+@bot.command()
 async def userinfo(ctx, member: discord.Member = None):
     member = ctx.author if not member else member
     roles = [role for role in member.roles]
@@ -214,6 +244,8 @@ async def embed2(ctx):
     embed = discord.Embed(title=f'Misc Commands', description='Here are my misc Modules! :smile:', colour=ctx.author.colour, timestamp=ctx.message.created_at)
 
     embed.add_field(name='Shows the bots invite link', value="`comma!invite`", inline=False)
+    embed.add_field(name='Link To Source Code', value="`comma!source`", inline=False)
+    embed.add_field(name='Generates A Random Password', value="`comma!passGen`", inline=False)
 
 
     embed.set_footer(text=f"Carpe Noctem | {bot.user.name}")
