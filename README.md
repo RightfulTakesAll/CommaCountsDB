@@ -16,4 +16,4 @@ _____________________________
 
 # passGen Command API?
 
-###### [API](https://github.com/DemonEclipSe/authgen/)
+## [API](https://github.com/DemonEclipSe/authgen/)
